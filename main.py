@@ -24,19 +24,27 @@ def check_collision(pipes):
         if bird_rect.colliderect(pipe):#проверяем,сталкнулись ли хитбоксы птички и трубы (True или False)
             return False #Если мы возвращаем False,то это значение принимает переменная game_active, см. ниже
         elif bird_rect.top <= -100 or bird_rect.bottom >= 902:
-            return False
-            
+            return False        
     return True
-
+def rotate_bird(bird):
+    new_bird = pygame.transform.rotozoom(bird, -bird_movement * 2 , 1) #Агрумнты:что перевырачиваем, как переварачиваем, как приближаем
+    return new_bird
+def bird_animation(): #Анимация крыльев
+    new_bird = bird_frames[bird_index] #смена картинки на bird_index
+    new_bird_rect = new_bird.get_rect(center =(100,bird_rect.centery))#хитбокс каждой картинки и ее расположение.Делаем все кадры анимации наложенными друг на друга и постоянно друг друга сменяющимися
+    return new_bird , new_bird_rect
 pygame.init()
 
 #Screen settings
 screen = pygame.display.set_mode((576,1024))#Screen - окно ,его размещение и размер (576-w,1024-h)
 clock = pygame.time.Clock()#счетчик каждров или типа того
+programIcon = pygame.image.load('assets/icon.png') #favivon
+pygame.display.set_icon(programIcon)
+pygame.display.set_caption('Flappy Bird')
 
 #Ojects & their settings
 gravity = 0.25
-bird_movement = 0
+bird_movement = 0 # 0+gravity
 game_active = True
 
 
@@ -47,9 +55,15 @@ floor_surface = pygame.image.load("assets/base.png").convert() #floor;
 floor_surface = pygame.transform.scale2x(floor_surface)
 floor_x_pos = 0; #Начальная координата floor(нужно для анимации движения пола)
 
-bird_surface = pygame.image.load("assets/bluebird-midflap.png").convert()
-bird_surface = pygame.transform.scale2x(bird_surface)
-bird_rect = bird_surface.get_rect(center = (100,512)) #хитбокс птички
+bird_downflap = pygame.transform.scale2x(pygame.image.load("assets/bluebird-downflap.png").convert_alpha())
+bird_midflap = pygame.transform.scale2x(pygame.image.load("assets/bluebird-midflap.png").convert_alpha())
+bird_upflap = pygame.transform.scale2x(pygame.image.load("assets/bluebird-upflap.png").convert_alpha())
+bird_frames = [bird_downflap, bird_midflap, bird_upflap] #анимация птички из 3 объектов (см выше)
+bird_index = 0
+bird_surface = bird_frames[bird_index]
+bird_rect = bird_surface.get_rect(center = (100, 512))
+BIRDFLAP = pygame.USEREVENT + 1 #USEREVENT может быть только один,чтобы создать несколько ,прописываем USEREVENT +1,..+2,..+3 и т.д.
+pygame.time.set_timer(BIRDFLAP,200) #вся анимация проходит за 200 мс, запуск ,при событии BIRDFLAP
 
 pipe_surface = pygame.image.load("assets/pipe-green.png").convert()
 pipe_surface = pygame.transform.scale2x(pipe_surface)
@@ -78,20 +92,30 @@ while True:
             bird_movement = bird_movement-10
         elif event.type == SPAWNPIPE: #каждый раз ,при созданном нами событии SPAWNPIPE, выполняется функция create_pipe и координаты создания трубы записываются в массив pipe_list
             pipe_list.extend(create_pipe())
+        elif event.type == BIRDFLAP:
+            if bird_index <2:
+                bird_index +=1
+            else:
+                bird_index = 0
+            bird_surface,bird_rect = bird_animation()
     #Вызов и расположение объектов
         # bg
     screen.blit(bg_surface,(0,0))
+
         # floor
     floor_x_pos -= 1 #т.к. у нас цикл while true :каждый раз к расположению по X прибавляется 1,что обеспечивает движением объект floor
     draw_floor()
+
     if floor_x_pos <= -576: #Когда щирина оставшейся можельки floor становется меньши или равна -576(конец экрана) ,она становится равна 0 и отрисовывается повтороно,см функцию выше
         floor_x_pos = 0
     if game_active == True:
         # bird
         bird_movement += gravity
+        rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement #настройка смещения хитбокса вместе с текстурой птички(ctntery ,потому что птичка падает центрально вертикально вниз(по прямой))
-        screen.blit(bird_surface,bird_rect) #размещаем птичку в своем хитбоксе
+        screen.blit(rotated_bird,bird_rect) #размещаем птичку в своем хитбоксе
         game_active = check_collision(pipe_list)
+
         # Pipes
         pipe_list = move_pipes(pipe_list)
         draw_pipes(pipe_list)
