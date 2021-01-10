@@ -33,7 +33,22 @@ def bird_animation(): #Анимация крыльев
     new_bird = bird_frames[bird_index] #смена картинки на bird_index
     new_bird_rect = new_bird.get_rect(center =(100,bird_rect.centery))#хитбокс каждой картинки и ее расположение.Делаем все кадры анимации наложенными друг на друга и постоянно друг друга сменяющимися
     return new_bird , new_bird_rect
+    
 pygame.init()
+
+def score_display(game_state):
+    if game_state =="main_game":
+        score_surface = game_font.render(str(score), True,(255,255,255)) #Font settings(text,anti-alised or not, color)
+        score_rect = score_surface.get_rect(center = (288, 100))
+        screen.blit(score_surface,score_rect)
+    elif game_state =="game_over":
+        score_surface = game_font.render(str(score), True,(255,255,255))
+        score_rect = score_surface.get_rect(center = (288, 100))
+        screen.blit(score_surface,score_rect)
+
+        high_score_surface = game_font.render(str(score), True,(255,255,255))
+        high_score_rect = high_score_surface.get_rect(center = (288, 100))
+        screen.blit(high_score_surface,high_score_rect)
 
 #Screen settings
 screen = pygame.display.set_mode((576,1024))#Screen - окно ,его размещение и размер (576-w,1024-h)
@@ -41,11 +56,14 @@ clock = pygame.time.Clock()#счетчик каждров или типа тог
 programIcon = pygame.image.load('assets/icon.png') #favivon
 pygame.display.set_icon(programIcon)
 pygame.display.set_caption('Flappy Bird')
+game_font = pygame.font.Font("04B_19.ttf",40)
 
 #Ojects & their settings
 gravity = 0.25
 bird_movement = 0 # 0+gravity
 game_active = True
+score = 0
+the_highest_score = 0 
 
 
 bg_surface = pygame.image.load("assets/background-day.png").convert() #bg ;convert() конвертирует изображение из src в формат,который болле удобен pygame (необязательно)
@@ -112,7 +130,7 @@ while True:
         # bird
         bird_movement += gravity
         rotated_bird = rotate_bird(bird_surface)
-        bird_rect.centery += bird_movement #настройка смещения хитбокса вместе с текстурой птички(ctntery ,потому что птичка падает центрально вертикально вниз(по прямой))
+        bird_rect.centery += bird_movement #настройка смещения хитбокса вместе с текстурой птички(centery ,потому что птичка падает центрально вертикально вниз(по прямой))
         screen.blit(rotated_bird,bird_rect) #размещаем птичку в своем хитбоксе
         game_active = check_collision(pipe_list)
 
@@ -120,6 +138,13 @@ while True:
         pipe_list = move_pipes(pipe_list)
         draw_pipes(pipe_list)
 
+        #Score
+        score_display("main_game") #см функцию выше
+        print("game is continuing")
+    else :
+        score_display("game_over")
+        print("game is over")
+    
     pygame.display.update()
     clock.tick(120) #ограничение fps
 
