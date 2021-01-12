@@ -10,7 +10,7 @@ def create_pipe():
     return bottom_pipe , top_pipe
 def move_pipes (pipes):
     for pipe in pipes:
-        pipe.centerx -= 5
+        pipe.centerx -= 5    #5 -easy mode,10 -hard , 15 -insane
     return pipes
 def draw_pipes(pipes):
     for pipe in pipes:
@@ -23,6 +23,7 @@ def check_collision(pipes):
     for pipe in pipes:
         if bird_rect.colliderect(pipe):#проверяем,сталкнулись ли хитбоксы птички и трубы (True или False)
             return False #Если мы возвращаем False,то это значение принимает переменная game_active, см. ниже
+
         elif bird_rect.top <= -100 or bird_rect.bottom >= 902:
             return False        
     return True
@@ -38,15 +39,15 @@ pygame.init()
 
 def score_display(game_state):
     if game_state =="main_game":
-        score_surface = game_font.render(str(score), True,(255,255,255)) #Font settings(text,anti-alised or not, color)
+        score_surface = game_font.render(str(round(score)), True,(255,255,255)) #Font settings(text,anti-alised or not, color)
         score_rect = score_surface.get_rect(center = (288, 100))
         screen.blit(score_surface,score_rect)
     elif game_state =="game_over":
-        score_surface = game_font.render(str(score), True,(255,255,255))
+        score_surface = game_font.render(str(round(score)), True,(255,255,255))
         score_rect = score_surface.get_rect(center = (288, 100))
         screen.blit(score_surface,score_rect)
 
-        high_score_surface = game_font.render(str(score), True,(255,255,255))
+        high_score_surface = game_font.render(str(round(score)), True,(255,255,255))
         high_score_rect = high_score_surface.get_rect(center = (288, 100))
         screen.blit(high_score_surface,high_score_rect)
 
@@ -100,16 +101,18 @@ while True:
             if event.key == pygame.K_SPACE and game_active == True: #на пробел
                 bird_movement = 0
                 bird_movement = bird_movement-10
-            elif event.key == pygame.K_SPACE and game_active == False:#Работает только тогда,когда игра окончена
+            elif (event.key == pygame.K_SPACE and game_active == False):#Работает только тогда,когда игра окончена
                 pipe_list.clear()
                 bird_movement = 0
                 bird_rect.center = (100,512)
+                score = 0
                 game_active = True
         elif event.type == pygame.MOUSEBUTTONDOWN:# на ЛКМ
             bird_movement = 0
             bird_movement = bird_movement-10
         elif event.type == SPAWNPIPE: #каждый раз ,при созданном нами событии SPAWNPIPE, выполняется функция create_pipe и координаты создания трубы записываются в массив pipe_list
             pipe_list.extend(create_pipe())
+            
         elif event.type == BIRDFLAP:
             if bird_index <2:
                 bird_index +=1
@@ -133,17 +136,18 @@ while True:
         bird_rect.centery += bird_movement #настройка смещения хитбокса вместе с текстурой птички(centery ,потому что птичка падает центрально вертикально вниз(по прямой))
         screen.blit(rotated_bird,bird_rect) #размещаем птичку в своем хитбоксе
         game_active = check_collision(pipe_list)
-
+        
         # Pipes
         pipe_list = move_pipes(pipe_list)
         draw_pipes(pipe_list)
 
         #Score
         score_display("main_game") #см функцию выше
-        print("game is continuing")
+        score+=0.01
+        # print("game is continuing")
     else :
         score_display("game_over")
-        print("game is over")
+        # print("game is over")
     
     pygame.display.update()
     clock.tick(120) #ограничение fps
