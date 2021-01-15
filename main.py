@@ -34,22 +34,25 @@ def bird_animation(): #Анимация крыльев
     new_bird = bird_frames[bird_index] #смена картинки на bird_index
     new_bird_rect = new_bird.get_rect(center =(100,bird_rect.centery))#хитбокс каждой картинки и ее расположение.Делаем все кадры анимации наложенными друг на друга и постоянно друг друга сменяющимися
     return new_bird , new_bird_rect
-    
 pygame.init()
 
 def score_display(game_state):
     if game_state =="main_game":
-        score_surface = game_font.render(str(round(score)), True,(255,255,255)) #Font settings(text,anti-alised or not, color)
+        score_surface = game_font.render(str(round(score)), True ,(255,255,255)) #Font settings(text,anti-alised or not, color)
         score_rect = score_surface.get_rect(center = (288, 100))
         screen.blit(score_surface,score_rect)
     elif game_state =="game_over":
         score_surface = game_font.render(str(round(score)), True,(255,255,255))
         score_rect = score_surface.get_rect(center = (288, 100))
         screen.blit(score_surface,score_rect)
-
-        high_score_surface = game_font.render(str(round(score)), True,(255,255,255))
-        high_score_rect = high_score_surface.get_rect(center = (288, 100))
+        
+        high_score_surface = game_font.render(str(round(the_highest_score)), True,(255,255,255))
+        high_score_rect = high_score_surface.get_rect(center = (288, 850))
         screen.blit(high_score_surface,high_score_rect)
+def update_the_highest_score(score,the_highest_score):
+    if score > the_highest_score:
+        the_highest_score = score
+    return the_highest_score
 
 #Screen settings
 screen = pygame.display.set_mode((576,1024))#Screen - окно ,его размещение и размер (576-w,1024-h)
@@ -90,6 +93,11 @@ pipe_list = []
 SPAWNPIPE = pygame.USEREVENT
 pygame.time.set_timer(SPAWNPIPE, 1000)
 pipe_height = [400,600,800]
+
+game_over_surface = pygame.image.load("./assets/message.png").convert_alpha()
+game_over_surface = pygame.transform.scale2x(game_over_surface)
+game_over_rect = game_over_surface.get_rect(center = (288,512))
+
 #Game working
 while True:
     #Отслеживание событий со стороны пользователя
@@ -101,18 +109,25 @@ while True:
             if event.key == pygame.K_SPACE and game_active == True: #на пробел
                 bird_movement = 0
                 bird_movement = bird_movement-10
-            elif (event.key == pygame.K_SPACE and game_active == False):#Работает только тогда,когда игра окончена
+            elif event.key == pygame.K_SPACE and game_active == False:#Работает только тогда,когда игра окончена
+                print("sc after ending")
                 pipe_list.clear()
                 bird_movement = 0
                 bird_rect.center = (100,512)
                 score = 0
                 game_active = True
         elif event.type == pygame.MOUSEBUTTONDOWN:# на ЛКМ
-            bird_movement = 0
-            bird_movement = bird_movement-10
+            if game_active == True: #Если клик осуществелн во время игры,то происходит прыждок
+                bird_movement = 0
+                bird_movement = bird_movement-10
+            elif game_active == False: #Если клик осуществелн после окончания игры,то игра начинается заново
+                pipe_list.clear()
+                bird_movement = 0
+                bird_rect.center = (100,512)
+                score = 0
+                game_active = True 
         elif event.type == SPAWNPIPE: #каждый раз ,при созданном нами событии SPAWNPIPE, выполняется функция create_pipe и координаты создания трубы записываются в массив pipe_list
             pipe_list.extend(create_pipe())
-            
         elif event.type == BIRDFLAP:
             if bird_index <2:
                 bird_index +=1
@@ -137,11 +152,12 @@ while True:
 
         #Score
         score_display("main_game") #см функцию выше
-        score+=0.01
+        score+=0.00833333333
         # print("game is continuing")
     else :
+        the_highest_score = update_the_highest_score(score,the_highest_score)
         score_display("game_over")
-        # print("game is over")
+        screen.blit(game_over_surface, game_over_rect)
         
     # floor
     floor_x_pos -= 1 #т.к. у нас цикл while true :каждый раз к расположению по X прибавляется 1,что обеспечивает движением объект floor
