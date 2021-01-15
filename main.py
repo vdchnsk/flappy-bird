@@ -123,12 +123,6 @@ while True:
         # bg
     screen.blit(bg_surface,(0,0))
 
-        # floor
-    floor_x_pos -= 1 #т.к. у нас цикл while true :каждый раз к расположению по X прибавляется 1,что обеспечивает движением объект floor
-    draw_floor()
-
-    if floor_x_pos <= -576: #Когда щирина оставшейся можельки floor становется меньши или равна -576(конец экрана) ,она становится равна 0 и отрисовывается повтороно,см функцию выше
-        floor_x_pos = 0
     if game_active == True:
         # bird
         bird_movement += gravity
@@ -148,7 +142,13 @@ while True:
     else :
         score_display("game_over")
         # print("game is over")
-    
+        
+    # floor
+    floor_x_pos -= 1 #т.к. у нас цикл while true :каждый раз к расположению по X прибавляется 1,что обеспечивает движением объект floor
+    draw_floor()
+    if floor_x_pos <= -576: #Когда щирина оставшейся можельки floor становется меньши или равна -576(конец экрана) ,она становится равна 0 и отрисовывается повтороно,см функцию выше
+        floor_x_pos = 0
+
     pygame.display.update()
     clock.tick(120) #ограничение fps
 
