@@ -22,9 +22,11 @@ def draw_pipes(pipes):
 def check_collision(pipes):
     for pipe in pipes:
         if bird_rect.colliderect(pipe):#проверяем,сталкнулись ли хитбоксы птички и трубы (True или False)
+            death_sound.play()
             return False #Если мы возвращаем False,то это значение принимает переменная game_active, см. ниже
 
-        elif bird_rect.top <= -100 or bird_rect.bottom >= 902:
+        elif bird_rect.top <= -100 or bird_rect.bottom >= 892:
+            death_sound.play()
             return False        
     return True
 def rotate_bird(bird):
@@ -34,6 +36,8 @@ def bird_animation(): #Анимация крыльев
     new_bird = bird_frames[bird_index] #смена картинки на bird_index
     new_bird_rect = new_bird.get_rect(center =(100,bird_rect.centery))#хитбокс каждой картинки и ее расположение.Делаем все кадры анимации наложенными друг на друга и постоянно друг друга сменяющимися
     return new_bird , new_bird_rect
+
+pygame.mixer.pre_init(frequency = 44100, size = 32, channels = 1, buffer = 512)#инициализация микшера звука заранее,для большей производительности
 pygame.init()
 
 def score_display(game_state):
@@ -59,7 +63,7 @@ screen = pygame.display.set_mode((576,1024))#Screen - окно ,его разм�
 clock = pygame.time.Clock()#счетчик каждров или типа того
 programIcon = pygame.image.load('assets/icon.png') #favivon
 pygame.display.set_icon(programIcon)
-pygame.display.set_caption('Flappy Bird')
+pygame.display.set_caption('Flappy Bird by UtkaDuck')
 game_font = pygame.font.Font("04B_19.ttf",40)
 
 #Ojects & their settings
@@ -98,6 +102,10 @@ game_over_surface = pygame.image.load("./assets/message.png").convert_alpha()
 game_over_surface = pygame.transform.scale2x(game_over_surface)
 game_over_rect = game_over_surface.get_rect(center = (288,512))
 
+#sounds
+flap_sound = pygame.mixer.Sound("./sound/sfx_wing.wav")
+death_sound = pygame.mixer.Sound("./sound/sfx_die.wav")
+
 #Game working
 while True:
     #Отслеживание событий со стороны пользователя
@@ -109,8 +117,8 @@ while True:
             if event.key == pygame.K_SPACE and game_active == True: #на пробел
                 bird_movement = 0
                 bird_movement = bird_movement-10
+                flap_sound.play() #Звук взмаха крыльями
             elif event.key == pygame.K_SPACE and game_active == False:#Работает только тогда,когда игра окончена
-                print("sc after ending")
                 pipe_list.clear()
                 bird_movement = 0
                 bird_rect.center = (100,512)
@@ -120,6 +128,7 @@ while True:
             if game_active == True: #Если клик осуществелн во время игры,то происходит прыждок
                 bird_movement = 0
                 bird_movement = bird_movement-10
+                flap_sound.play() #Звук взмаха крыльями
             elif game_active == False: #Если клик осуществелн после окончания игры,то игра начинается заново
                 pipe_list.clear()
                 bird_movement = 0
@@ -153,7 +162,6 @@ while True:
         #Score
         score_display("main_game") #см функцию выше
         score+=0.00833333333
-        # print("game is continuing")
     else :
         the_highest_score = update_the_highest_score(score,the_highest_score)
         score_display("game_over")
