@@ -1,2 +1,2 @@
 # FlappyBird
- Flappy Bird game using python and PyGame module
+ Flappy Bird game using python and PyGame lib
