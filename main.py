@@ -63,13 +63,14 @@ screen = pygame.display.set_mode((576,1024))#Screen - окно ,его разм�
 clock = pygame.time.Clock()#счетчик каждров или типа того
 programIcon = pygame.image.load('assets/icon.png') #favivon
 pygame.display.set_icon(programIcon)
-pygame.display.set_caption('Flappy Bird by UtkaDuck')
+pygame.display.set_caption('Flappy Bird by DuckoMan')
 game_font = pygame.font.Font("04B_19.ttf",40)
 
 #Ojects & their settings
 gravity = 0.25
 bird_movement = 0 # 0+gravity
 game_active = True
+game_started = False
 score = 0
 the_highest_score = 0 
 
@@ -124,17 +125,20 @@ while True:
                 bird_rect.center = (100,512)
                 score = 0
                 game_active = True
+                game_started = False
         elif event.type == pygame.MOUSEBUTTONDOWN:# на ЛКМ
             if game_active == True: #Если клик осуществелн во время игры,то происходит прыждок
                 bird_movement = 0
                 bird_movement = bird_movement-10
                 flap_sound.play() #Звук взмаха крыльями
+                game_started = True
             elif game_active == False: #Если клик осуществелн после окончания игры,то игра начинается заново
                 pipe_list.clear()
                 bird_movement = 0
                 bird_rect.center = (100,512)
                 score = 0
                 game_active = True 
+                game_started = False
         elif event.type == SPAWNPIPE: #каждый раз ,при созданном нами событии SPAWNPIPE, выполняется функция create_pipe и координаты создания трубы записываются в массив pipe_list
             pipe_list.extend(create_pipe())
         elif event.type == BIRDFLAP:
