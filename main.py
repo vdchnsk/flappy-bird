@@ -72,7 +72,7 @@ bird_movement = 0 # 0+gravity
 game_active = False
 score = 0
 the_highest_score = 0 
-
+random_pipe_color = random.randint(1,2)
 
 bg_surface = pygame.image.load("assets/background-day.png").convert() #bg ;convert() конвертирует изображение из src в формат,который болле удобен pygame (необязательно)
 bg_surface = pygame.transform.scale2x(bg_surface) #Увеличиваем разрещение изображения (bg) вдвое
@@ -91,7 +91,10 @@ bird_rect = bird_surface.get_rect(center = (100, 512))
 BIRDFLAP = pygame.USEREVENT + 1 #USEREVENT может быть только один,чтобы создать несколько ,прописываем USEREVENT +1,..+2,..+3 и т.д.
 pygame.time.set_timer(BIRDFLAP,200) #вся анимация проходит за 200 мс, запуск ,при событии BIRDFLAP
 
-pipe_surface = pygame.image.load("assets/pipe-green.png").convert()
+if random_pipe_color == 1:
+        pipe_surface = pygame.image.load("assets/pipe-green.png").convert()
+elif random_pipe_color ==2:
+    pipe_surface = pygame.image.load("assets/pipe-red.png").convert()
 pipe_surface = pygame.transform.scale2x(pipe_surface)
 pipe_list = [] 
 SPAWNPIPE = pygame.USEREVENT
@@ -108,6 +111,11 @@ death_sound = pygame.mixer.Sound("./sound/sfx_die.wav")
 
 #Game working
 while True:
+    if random_pipe_color == 1:
+        pipe_surface = pygame.image.load("assets/pipe-green.png").convert()
+    elif random_pipe_color ==2:
+        pipe_surface = pygame.image.load("assets/pipe-red.png").convert()
+    pipe_surface = pygame.transform.scale2x(pipe_surface)
     #Отслеживание событий со стороны пользователя
     for event in pygame.event.get():
         if event.type == pygame.QUIT: #если тип события = QUIT(пользователь нажал на крестик вверху окна),то происходит закрытие окна
@@ -124,6 +132,7 @@ while True:
                 bird_rect.center = (100,512)
                 score = 0
                 game_active = True
+                random_pipe_color = random.randint(1,2)
                 game_started = False
         elif event.type == pygame.MOUSEBUTTONDOWN:# на ЛКМ
             if game_active == True: #Если клик осуществелн во время игры,то происходит прыждок
@@ -136,6 +145,7 @@ while True:
                 bird_movement = 0
                 bird_rect.center = (100,512)
                 score = 0
+                random_pipe_color = random.randint(1,2)
                 game_active = True 
                 game_started = False
         elif event.type == SPAWNPIPE: #каждый раз ,при созданном нами событии SPAWNPIPE, выполняется функция create_pipe и координаты создания трубы записываются в массив pipe_list
