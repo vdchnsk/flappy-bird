@@ -111,13 +111,13 @@ death_sound = pygame.mixer.Sound("./sound/sfx_die.wav")
 
 #Game working
 while True:
-    if random_pipe_color == 1:
-        pipe_surface = pygame.image.load("assets/pipe-green.png").convert()
-    elif random_pipe_color ==2:
-        pipe_surface = pygame.image.load("assets/pipe-red.png").convert()
-    pipe_surface = pygame.transform.scale2x(pipe_surface)
     #Отслеживание событий со стороны пользователя
     for event in pygame.event.get():
+        if random_pipe_color == 1:
+            pipe_surface = pygame.image.load("assets/pipe-green.png").convert()
+        elif random_pipe_color ==2:
+            pipe_surface = pygame.image.load("assets/pipe-red.png").convert()
+        pipe_surface = pygame.transform.scale2x(pipe_surface)
         if event.type == pygame.QUIT: #если тип события = QUIT(пользователь нажал на крестик вверху окна),то происходит закрытие окна
             pygame.quit() 
             sys.exit() #При закрытии окна пользвователем,процесс работы программы не прекращается,поэтому пользуемся библиотекой sys для прекращенеия этого самого процесса
