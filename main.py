@@ -61,7 +61,7 @@ def update_the_highest_score(score,the_highest_score):
 #Screen settings
 screen = pygame.display.set_mode((576,1024))#Screen - окно ,его размещение и размер (576-w,1024-h)
 clock = pygame.time.Clock()#счетчик каждров или типа того
-programIcon = pygame.image.load('assets/icon.png') #favivon
+programIcon = pygame.image.load('assets/icon.png') #favicon
 pygame.display.set_icon(programIcon)
 pygame.display.set_caption('Flappy Bird by DuckoMan')
 game_font = pygame.font.Font("04B_19.ttf",40)
