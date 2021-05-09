@@ -1,4 +1,4 @@
-# <img align="left" alt="flappyBirdIcon" width="26px" src="https://raw.githubusercontent.com/DuckoMan/FlappyBird/main/assets/icon.png" />FlappyBird
+# <img alt="flappyBirdIcon" width="30px" src="https://raw.githubusercontent.com/DuckoMan/FlappyBird/main/assets/icon.png" />FlappyBird
 
 **Version 1.0.0**
 
