@@ -1,7 +1,7 @@
 import pygame, sys, random
 from constants.Strings import (GameState)
 from constants.Settings import (WindowSettings)
-from constants.Physics import (PipePhysics)
+from constants.Physics import (PipePhysics, FloorPhysics)
 
 def draw_floor(): 
     screen.blit(
