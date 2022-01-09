@@ -10,7 +10,7 @@
 
 ## ⚙ Technologies
 
-### 💅 Fornt-end
+### 💅 Front-end
 
 - PyGame
 
