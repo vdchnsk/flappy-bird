@@ -1,4 +1,4 @@
-# <img align="bottom" alt="Flappy Bird Icon" width="34px" src="./assets/icon.png" /> FlappyBird
+# <img align="bottom" alt="Flappy Bird Icon" width="34px" src="./assets/icon.png" /> Flappy Bird
 
 **Version 1.0.0**
 
