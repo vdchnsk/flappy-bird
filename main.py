@@ -1,7 +1,15 @@
 import pygame, sys, random
 from constants.Strings import (GameState)
-from constants.Settings import (WindowSettings)
-from constants.Physics import (PipePhysics, FloorPhysics)
+from constants.Settings import (
+    WindowSettings,
+    SoundSettings,
+    InteractionSettins
+)
+from constants.Physics import (
+    PipePhysics,
+    FloorPhysics,
+    BirdPhysics,
+)
 
 def draw_floor(): 
     screen.blit(
@@ -11,20 +19,19 @@ def draw_floor():
 
     screen.blit(
         floor_surface,
-        (
-            floor_x_pos + WindowSettings.SCREEN_WIDTH, 
-            FloorPhysics.FLOOR_Y_POSITION
-        )
+        (floor_x_pos + WindowSettings.SCREEN_WIDTH, FloorPhysics.FLOOR_Y_POSITION)
     )
 
 
 def create_pipe():
-    random_pipe_pos = random.choice(pipe_height)
+    random_pipe_positon = random.choice(pipe_height)
+
     bottom_pipe = pipe_surface.get_rect(
-        midtop = (700, random_pipe_pos)
+        midtop = (PipePhysics.PIPE_X_POSITION, random_pipe_positon)
     )
+    
     top_pipe = pipe_surface.get_rect(
-        midbottom = (700, random_pipe_pos - 300)
+        midbottom = (PipePhysics.PIPE_X_POSITION, random_pipe_positon - 300)
     )
 
     return bottom_pipe, top_pipe
@@ -48,14 +55,13 @@ def draw_pipes(pipes):
 
 def check_collision(pipes):
     for pipe in pipes:
-        if bird_rect.colliderect(pipe):
+        if (
+            bird_rect.colliderect(pipe) or 
+            bird_rect.top <= -100 or bird_rect.bottom >= 892
+        ):
             DEATH_SOUND.play()
-            return False
+            return False     
 
-        elif bird_rect.top <= -100 or bird_rect.bottom >= 892:
-            DEATH_SOUND.play()
-            return False        
-    
     return True
 
 
@@ -77,10 +83,10 @@ def bird_animation():
 
 
 pygame.mixer.pre_init(
-    frequency = 44100, 
-    size = 32, 
-    channels = 1, 
-    buffer = 512
+    frequency = SoundSettings.FREQUENCY, 
+    size = SoundSettings.SIZE, 
+    channels = SoundSettings.CHANNELS, 
+    buffer = SoundSettings.BUFFER,
 )
 
 pygame.init()
@@ -142,7 +148,6 @@ pygame.display.set_caption(WindowSettings.WINDOW_NAME)
 
 
 # * Ojects & their settings
-GRAVITY_FACTOR = 0.25
 bird_movement = 0 
 game_active = False
 score = 0
@@ -172,9 +177,12 @@ bird_flap = pygame.USEREVENT + 1
 pygame.time.set_timer(bird_flap, 200) 
 
 if random_pipe_color == 1:
-        pipe_surface = pygame.image.load('assets/pipe-green.png').convert()
-elif random_pipe_color ==2:
-    pipe_surface = pygame.image.load('assets/pipe-red.png').convert()
+    pipe_surface = pygame.image.load('assets/pipe-green.png')
+    .convert()
+elif random_pipe_color == 2:
+    pipe_surface = pygame.image.load('assets/pipe-red.png')
+    .convert()
+
 pipe_surface = pygame.transform.scale2x(pipe_surface)
 
 pipe_list = [] 
@@ -185,6 +193,7 @@ pipe_height = [400,600,800]
 
 game_over_surface = pygame.image.load('./assets/message.png').convert_alpha()
 game_over_surface = pygame.transform.scale2x(game_over_surface)
+
 game_over_rect = game_over_surface.get_rect(center = (288,512))
 
 # * Sounds
@@ -195,9 +204,11 @@ DEATH_SOUND = pygame.mixer.Sound('./sound/sfx_die.wav')
 while True:
     for event in pygame.event.get():
         if random_pipe_color == 1:
-            pipe_surface = pygame.image.load('assets/pipe-green.png').convert()
-        elif random_pipe_color ==2:
-            pipe_surface = pygame.image.load('assets/pipe-red.png').convert()
+            pipe_surface = pygame.image.load('assets/pipe-green.png')
+            .convert()
+        elif random_pipe_color == 2:
+            pipe_surface = pygame.image.load('assets/pipe-red.png')
+            .convert()
 
         pipe_surface = pygame.transform.scale2x(pipe_surface)
 
@@ -208,49 +219,53 @@ while True:
         elif event.type == pygame.KEYDOWN : 
             if event.key == pygame.K_SPACE and game_active == True: 
                 bird_movement = 0
-                bird_movement = bird_movement-10
+                bird_movement = bird_movement - 10
                 FLAP_SOUND.play() 
 
             elif event.key == pygame.K_SPACE and game_active == False: # Works, when the game has been finished
                 pipe_list.clear()
                 bird_movement = 0
-                bird_rect.center = (100,512)
+                bird_rect.center = (100, 512)
                 score = 0
                 game_active = True
-                random_pipe_color = random.randint(1,2)
+                random_pipe_color = random.randint(1, 2)
                 game_started = False
 
-        elif event.type == pygame.MOUSEBUTTONDOWN:# на ЛКМ
+        elif event.type == pygame.MOUSEBUTTONDOWN:
             if game_active == True:
                 bird_movement = 0
-                bird_movement = bird_movement-10
+                bird_movement = bird_movement -10
                 FLAP_SOUND.play()
                 game_started = True
 
             elif game_active == False: 
                 pipe_list.clear()
                 bird_movement = 0
-                bird_rect.center = (100,512)
+                bird_rect.center = (100, 512)
                 score = 0
-                random_pipe_color = random.randint(1,2)
+                random_pipe_color = random.randint(1, 2)
                 game_active = True 
                 game_started = False
 
         elif event.type == spawn_pipe:
-            pipe_list.extend(create_pipe())
+            pipe_list.extend(
+                create_pipe()
+            )
 
         elif event.type == bird_flap:
-            if bird_index <2:
-                bird_index +=1
+            if bird_index < 2:
+                bird_index += 1
             else:
                 bird_index = 0
+
             bird_surface,bird_rect = bird_animation()
+
 
     screen.blit(bg_surface,(0,0))
 
     if game_active == True:
         # * bird
-        bird_movement += GRAVITY_FACTOR
+        bird_movement += BirdPhysics.GRAVITY_FACTOR
         rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement #setting the way how hitbox moves with the bird's texture
         screen.blit(rotated_bird,bird_rect) # setting the bird's texture inside of its texture
@@ -261,18 +276,25 @@ while True:
         draw_pipes(pipe_list)
 
         # * Score
-        score_display('main_game') 
-        score+=0.00833333333
+        score_display(GameState.MAIN) 
+        score += 0.008
     else :
-        sesstion_highest_score = update_the_highest_score(score, sesstion_highest_score)
-        score_display('game_over')
+        sesstion_highest_score = update_the_highest_score(
+            score,
+            sesstion_highest_score
+        )
+        
+        score_display(GameState.GAME_OVER)
+
         screen.blit(game_over_surface, game_over_rect)
         
     # * floor
     floor_x_pos -= 1 
+
     draw_floor()
+
     if floor_x_pos <= - WindowSettings.SCREEN_WIDTH:
         floor_x_pos = 0
 
     pygame.display.update()
-    clock.tick(120) # * setting FPS 
+    clock.tick(InteractionSettins.FPS)
