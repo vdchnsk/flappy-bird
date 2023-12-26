@@ -8,10 +8,6 @@
 <img src="https://github.com/vdchnsk/flappy-bird/assets/64404596/622bc7e2-513e-40ba-b71c-c2525d25ad65" height="400px"/>
 
 
-## 👨‍💻 Contributors
-
-- Valeriy Dichansky <dichansky@gmail.com>
-
 ## ⚙ Technologies
 
 - Python
@@ -30,4 +26,4 @@ pip install pygame
 python main.py
 ```
 
-[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-360/) [![PIP 21.0](https://img.shields.io/badge/pip-21.0-blue.svg)](https://www.pip.org/downloads/release/python-360/)
+[![Python 3.11](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-360/) [![PIP 23.3](https://img.shields.io/badge/pip-21.0-blue.svg)](https://www.pip.org/downloads/release/python-360/)
