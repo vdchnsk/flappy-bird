@@ -13,7 +13,7 @@ class Bird:
         self.surface = self.frames[self.movement_index]
         self.rect = self.surface.get_rect(center = (100, 512))
 
-        self.FLAP_SOUND = pg.mixer.Sound('./sound/sfx_wing.wav')
+        self.FLAP_SOUND = pg.mixer.Sound('assets/sound/sfx_wing.wav')
 
         pg.time.set_timer(BirdEvents.BIRD_FLAP, 200)
 

@@ -160,14 +160,14 @@ spawn_pipe = pygame.USEREVENT
 pygame.time.set_timer(spawn_pipe, 1000)
 pipe_height = [400,600,800]
 
-game_over_surface = pygame.image.load('./assets/graphics/message.png').convert_alpha()
+game_over_surface = pygame.image.load('assets/graphics/message.png').convert_alpha()
 game_over_surface = pygame.transform.scale2x(game_over_surface)
 
 game_over_rect = game_over_surface.get_rect(center = (288,512))
 
 # * Sounds
-FLAP_SOUND = pygame.mixer.Sound('./sound/sfx_wing.wav')
-DEATH_SOUND = pygame.mixer.Sound('./sound/sfx_die.wav')
+FLAP_SOUND = pygame.mixer.Sound('assets/sound/sfx_wing.wav')
+DEATH_SOUND = pygame.mixer.Sound('assets/sound/sfx_die.wav')
 
 def init_game_state():
     global pipe_list, score, game_active
