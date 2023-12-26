@@ -1,4 +1,4 @@
-import pygame
+import pygame as pg
 import sys
 import random
 from constants.strings import (GameState)
@@ -55,7 +55,7 @@ def draw_pipes(pipes):
         if pipe.bottom > WindowSettings.SCREEN_HEIGHT:
             screen.blit(pipe_surface, pipe)
         else:
-            flipes_pipe = pygame.transform.flip(pipe_surface, False, True)
+            flipes_pipe = pg.transform.flip(pipe_surface, False, True)
             screen.blit(flipes_pipe, pipe)
 
 
@@ -113,25 +113,25 @@ def update_the_highest_score(score, highest_score):
     return highest_score
 
 
-pygame.mixer.pre_init(
+pg.mixer.pre_init(
     frequency=SoundSettings.FREQUENCY,
     size=SoundSettings.SIZE,
     channels=SoundSettings.CHANNELS,
     buffer=SoundSettings.BUFFER,
 )
-pygame.init()
+pg.init()
 
-screen = pygame.display.set_mode(
+screen = pg.display.set_mode(
     (WindowSettings.SCREEN_WIDTH, WindowSettings.SCREEN_HEIGHT)
 )
 
-window_favicon = pygame.image.load('assets/graphics/icon.png')
-game_font = pygame.font.Font('assets/font/04B_19.ttf', 40)
+window_favicon = pg.image.load('assets/graphics/icon.png')
+game_font = pg.font.Font('assets/font/04B_19.ttf', 40)
 
-clock = pygame.time.Clock()
+clock = pg.time.Clock()
 
-pygame.display.set_icon(window_favicon)
-pygame.display.set_caption(WindowSettings.WINDOW_NAME)
+pg.display.set_icon(window_favicon)
+pg.display.set_caption(WindowSettings.WINDOW_NAME)
 
 bird = Bird()
 
@@ -139,43 +139,43 @@ game_active = False
 score = 0
 sesstion_highest_score = 0
 
-green_pipe = pygame.image.load('assets/graphics/pipe-green.png').convert()
-red_pipe = pygame.image.load('assets/graphics/pipe-red.png').convert()
+green_pipe = pg.image.load('assets/graphics/pipe-green.png').convert()
+red_pipe = pg.image.load('assets/graphics/pipe-red.png').convert()
 pipe_assets = [green_pipe, red_pipe]
 
 
 def randomize_pipe_asset():
     global pipe_surface
     pipe_surface = random.choice(pipe_assets)
-    pipe_surface = pygame.transform.scale2x(pipe_surface)
-    pygame.transform.scale2x(pipe_surface)
+    pipe_surface = pg.transform.scale2x(pipe_surface)
+    pg.transform.scale2x(pipe_surface)
 
 
 randomize_pipe_asset()
 
-bg_surface = pygame.image.load('assets/graphics/background-day.png').convert()
-bg_surface = pygame.transform.scale2x(bg_surface)
+bg_surface = pg.image.load('assets/graphics/background-day.png').convert()
+bg_surface = pg.transform.scale2x(bg_surface)
 
-floor_surface = pygame.image.load('assets/graphics/base.png').convert()
-floor_surface = pygame.transform.scale2x(floor_surface)
+floor_surface = pg.image.load('assets/graphics/base.png').convert()
+floor_surface = pg.transform.scale2x(floor_surface)
 floor_x_pos = 0
 
 pipe_list = []
-spawn_pipe = pygame.USEREVENT
+spawn_pipe = pg.USEREVENT
 
-pygame.time.set_timer(spawn_pipe, 1000)
+pg.time.set_timer(spawn_pipe, 1000)
 pipe_height = [400, 600, 800]
 
-game_over_surface = pygame.image.load(
+game_over_surface = pg.image.load(
     'assets/graphics/message.png'
 ).convert_alpha()
 
-game_over_surface = pygame.transform.scale2x(game_over_surface)
+game_over_surface = pg.transform.scale2x(game_over_surface)
 game_over_rect = game_over_surface.get_rect(center=(288, 512))
 
 # * Sounds
-FLAP_SOUND = pygame.mixer.Sound('assets/sound/sfx_wing.wav')
-DEATH_SOUND = pygame.mixer.Sound('assets/sound/sfx_die.wav')
+FLAP_SOUND = pg.mixer.Sound('assets/sound/sfx_wing.wav')
+DEATH_SOUND = pg.mixer.Sound('assets/sound/sfx_die.wav')
 
 
 def init_game_state():
@@ -190,17 +190,17 @@ def init_game_state():
 
 # * Game working
 while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            pg.quit()
             sys.exit()
 
         if game_active:
-            if event.type == pygame.MOUSEBUTTONDOWN or (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
+            if event.type == pg.MOUSEBUTTONDOWN or (event.type == pg.KEYDOWN and event.key == pg.K_SPACE):
                 bird.flap()
 
         if game_active == False:
-            if event.type == pygame.MOUSEBUTTONDOWN or (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
+            if event.type == pg.MOUSEBUTTONDOWN or (event.type == pg.KEYDOWN and event.key == pg.K_SPACE):
                 init_game_state()
 
         if event.type == spawn_pipe:
@@ -244,5 +244,5 @@ while True:
     if floor_x_pos <= -WindowSettings.SCREEN_WIDTH:
         floor_x_pos = 0
 
-    pygame.display.update()
+    pg.display.update()
     clock.tick(InteractionSettins.FPS)
