@@ -6,23 +6,24 @@ class Bird:
     movement_index = 0
 
     def __init__(self):
-        bird_downflap = pg.transform.scale2x(pg.image.load(
+        frame_downflap = pg.transform.scale2x(pg.image.load(
             'assets/graphics/bluebird-downflap.png').convert_alpha()
         )
-        bird_midflap = pg.transform.scale2x(pg.image.load(
+        frame_midflap = pg.transform.scale2x(pg.image.load(
             'assets/graphics/bluebird-midflap.png').convert_alpha()
         )
-        bird_upflap = pg.transform.scale2x(pg.image.load(
+        frame_upflap = pg.transform.scale2x(pg.image.load(
             'assets/graphics/bluebird-upflap.png').convert_alpha()
         )
 
-        self.frames = [bird_downflap, bird_midflap, bird_upflap]
+        self.frames = [frame_downflap, frame_midflap, frame_upflap]
         self.surface = self.frames[self.movement_index]
         self.rect = self.surface.get_rect(center=(100, 512))
 
-        self.FLAP_SOUND = pg.mixer.Sound('assets/sound/sfx_wing.wav')
+        self.flap_sound = pg.mixer.Sound('assets/sound/sfx_wing.wav')
 
-        pg.time.set_timer(BirdEvents.BIRD_FLAP, 200)
+        flap_animation_interval = 200
+        pg.time.set_timer(BirdEvents.BIRD_FLAP, flap_animation_interval)
 
     def init_state(self):
         self.movement = 0
@@ -44,7 +45,7 @@ class Bird:
     def flap(self):
         self.movement = 0
         self.movement -= 10
-        self.FLAP_SOUND.play()
+        self.flap_sound.play()
 
     def bird_animation_flap(self):
         if self.movement_index < 2:
