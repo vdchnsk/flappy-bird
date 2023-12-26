@@ -1,15 +1,15 @@
 import pygame, sys, random
-from constants.Strings import (GameState)
-from constants.Settings import (
+from constants.strings import (GameState)
+from constants.settings import (
     WindowSettings,
     SoundSettings,
     InteractionSettins
 )
-from constants.Physics import (
+from constants.physics import (
     PipePhysics,
     FloorPhysics,
 )
-from core.entities.Bird import (
+from core.entities.bird import (
     Bird,
     BirdEvents,
 )
