@@ -8,7 +8,10 @@ from constants.Settings import (
 from constants.Physics import (
     PipePhysics,
     FloorPhysics,
-    BirdPhysics,
+)
+from core.entities.Bird import (
+    Bird,
+    BirdEvents,
 )
 
 def draw_floor(): 
@@ -52,44 +55,16 @@ def draw_pipes(pipes):
             flipes_pipe = pygame.transform.flip(pipe_surface, False, True)
             screen.blit(flipes_pipe, pipe)
 
-
 def check_collision(pipes):
     for pipe in pipes:
         if (
-            bird_rect.colliderect(pipe) or 
-            bird_rect.top <= -100 or bird_rect.bottom >= 892
+            bird.rect.colliderect(pipe) or 
+            bird.rect.top <= -100 or bird.rect.bottom >= 892
         ):
             DEATH_SOUND.play()
             return False     
-
     return True
 
-
-def rotate_bird(bird):
-    new_bird = pygame.transform.rotozoom( # args: what are we rotating, how we are doing that, scale level 
-        bird, - bird_movement * 2, 1    
-    )
-
-    return new_bird
-
-
-def bird_animation():
-    new_bird = bird_frames[bird_index]
-    new_bird_rect = new_bird.get_rect(
-        center = (100, bird_rect.centery)
-    )
-
-    return new_bird, new_bird_rect
-
-
-pygame.mixer.pre_init(
-    frequency = SoundSettings.FREQUENCY, 
-    size = SoundSettings.SIZE, 
-    channels = SoundSettings.CHANNELS, 
-    buffer = SoundSettings.BUFFER,
-)
-
-pygame.init()
 
 def score_display(game_state):
     if game_state == GameState.MAIN:
@@ -101,7 +76,7 @@ def score_display(game_state):
         score_rect = score_surface.get_rect(center = (288, 100))
         screen.blit(score_surface,score_rect)
 
-    elif game_state == GameState.GAME_OVER:
+    if game_state == GameState.GAME_OVER:
         score_surface = game_font.render(
             str(round(score)),
             True,
@@ -133,26 +108,44 @@ def update_the_highest_score(score, highest_score):
     
     return highest_score
 
-# * Screen settings
+
+pygame.mixer.pre_init(
+    frequency = SoundSettings.FREQUENCY, 
+    size = SoundSettings.SIZE, 
+    channels = SoundSettings.CHANNELS, 
+    buffer = SoundSettings.BUFFER,
+)
+pygame.init()
+
 screen = pygame.display.set_mode(
     (WindowSettings.SCREEN_WIDTH, WindowSettings.SCREEN_HEIGHT)
 )
 
-windowFavicon = pygame.image.load('assets/icon.png') # * favicon
+window_favicon = pygame.image.load('assets/icon.png')
 game_font = pygame.font.Font('04B_19.ttf',40)
 
 clock = pygame.time.Clock()
 
-pygame.display.set_icon(windowFavicon)
+pygame.display.set_icon(window_favicon)
 pygame.display.set_caption(WindowSettings.WINDOW_NAME)
 
+bird = Bird()
 
-# * Ojects & their settings
-bird_movement = 0 
 game_active = False
 score = 0
 sesstion_highest_score = 0 
-random_pipe_color = random.randint(1,2)
+
+green_pipe = pygame.image.load('assets/pipe-green.png').convert()
+red_pipe = pygame.image.load('assets/pipe-red.png').convert()
+pipe_assets = [green_pipe, red_pipe]
+
+def randomize_pipe_asset():
+    global pipe_surface
+    pipe_surface = random.choice(pipe_assets)
+    pipe_surface = pygame.transform.scale2x(pipe_surface)
+    pygame.transform.scale2x(pipe_surface)
+
+randomize_pipe_asset()
 
 bg_surface = pygame.image.load('assets/background-day.png').convert()
 bg_surface = pygame.transform.scale2x(bg_surface) 
@@ -160,28 +153,6 @@ bg_surface = pygame.transform.scale2x(bg_surface)
 floor_surface = pygame.image.load('assets/base.png').convert() 
 floor_surface = pygame.transform.scale2x(floor_surface)
 floor_x_pos = 0;
-
-bird_downflap = pygame.transform.scale2x(pygame.image.load('assets/bluebird-downflap.png').convert_alpha())
-bird_midflap = pygame.transform.scale2x(pygame.image.load('assets/bluebird-midflap.png').convert_alpha())
-bird_upflap = pygame.transform.scale2x(pygame.image.load('assets/bluebird-upflap.png').convert_alpha())
-
-bird_frames = [bird_downflap, bird_midflap, bird_upflap]
-
-bird_index = 0
-bird_surface = bird_frames[bird_index]
-
-bird_rect = bird_surface.get_rect(center = (100, 512))
-
-bird_flap = pygame.USEREVENT + 1 
-
-pygame.time.set_timer(bird_flap, 200) 
-
-if random_pipe_color == 1:
-    pipe_surface = pygame.image.load('assets/pipe-green.png').convert()
-elif random_pipe_color == 2:
-    pipe_surface = pygame.image.load('assets/pipe-red.png').convert()
-
-pipe_surface = pygame.transform.scale2x(pipe_surface)
 
 pipe_list = [] 
 spawn_pipe = pygame.USEREVENT
@@ -198,73 +169,45 @@ game_over_rect = game_over_surface.get_rect(center = (288,512))
 FLAP_SOUND = pygame.mixer.Sound('./sound/sfx_wing.wav')
 DEATH_SOUND = pygame.mixer.Sound('./sound/sfx_die.wav')
 
+def init_game_state():
+    global pipe_list, score, game_active
+
+    pipe_list.clear()
+    bird.init_state()
+    score = 0
+    randomize_pipe_asset()
+    game_active = True
+
+
 # * Game working
 while True:
     for event in pygame.event.get():
-        if random_pipe_color == 1:
-            pipe_surface = pygame.image.load('assets/pipe-green.png').convert()
-        elif random_pipe_color == 2:
-            pipe_surface = pygame.image.load('assets/pipe-red.png').convert()
-
-        pipe_surface = pygame.transform.scale2x(pipe_surface)
-
         if event.type == pygame.QUIT:
             pygame.quit() 
             sys.exit()
+ 
+        if game_active:
+            if event.type == pygame.MOUSEBUTTONDOWN or (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
+                bird.flap()
 
-        elif event.type == pygame.KEYDOWN : 
-            if event.key == pygame.K_SPACE and game_active == True: 
-                bird_movement = 0
-                bird_movement = bird_movement - 10
-                FLAP_SOUND.play() 
+        if game_active == False:
+            if event.type == pygame.MOUSEBUTTONDOWN or (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
+                init_game_state()
 
-            elif event.key == pygame.K_SPACE and game_active == False: # Works, when the game has been finished
-                pipe_list.clear()
-                bird_movement = 0
-                bird_rect.center = (100, 512)
-                score = 0
-                game_active = True
-                random_pipe_color = random.randint(1, 2)
-                game_started = False
-
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if game_active == True:
-                bird_movement = 0
-                bird_movement = bird_movement -10
-                FLAP_SOUND.play()
-                game_started = True
-
-            elif game_active == False: 
-                pipe_list.clear()
-                bird_movement = 0
-                bird_rect.center = (100, 512)
-                score = 0
-                random_pipe_color = random.randint(1, 2)
-                game_active = True 
-                game_started = False
-
-        elif event.type == spawn_pipe:
+        if event.type == spawn_pipe:
             pipe_list.extend(
                 create_pipe()
             )
 
-        elif event.type == bird_flap:
-            if bird_index < 2:
-                bird_index += 1
-            else:
-                bird_index = 0
-
-            bird_surface,bird_rect = bird_animation()
-
+        if event.type == BirdEvents.BIRD_FLAP:
+            bird.bird_animation_flap()
 
     screen.blit(bg_surface,(0,0))
 
     if game_active == True:
-        # * bird
-        bird_movement += BirdPhysics.GRAVITY_FACTOR
-        rotated_bird = rotate_bird(bird_surface)
-        bird_rect.centery += bird_movement #setting the way how hitbox moves with the bird's texture
-        screen.blit(rotated_bird,bird_rect) # setting the bird's texture inside of its texture
+        bird.apply_gravity()
+        rotated_bird = bird.align_hitbox()
+        screen.blit(rotated_bird, bird.rect)
         game_active = check_collision(pipe_list)
         
         # * Pipes
@@ -274,7 +217,7 @@ while True:
         # * Score
         score_display(GameState.MAIN) 
         score += 0.008
-    else :
+    else:
         sesstion_highest_score = update_the_highest_score(
             score,
             sesstion_highest_score
@@ -289,7 +232,7 @@ while True:
 
     draw_floor()
 
-    if floor_x_pos <= - WindowSettings.SCREEN_WIDTH:
+    if floor_x_pos <= -WindowSettings.SCREEN_WIDTH:
         floor_x_pos = 0
 
     pygame.display.update()

@@ -11,13 +11,3 @@ class FloorPhysics:
         pass
 
     FLOOR_Y_POSITION = 900
-
-class BirdPhysics:
-    def __init__():
-        pass
-
-    GRAVITY_FACTOR = 0.25
-
-    MIN_EXISTING_HEIGHT = 0
-    MSX_EXISTING_HEIGHT = 0
-
