@@ -122,7 +122,7 @@ screen = pygame.display.set_mode(
 )
 
 window_favicon = pygame.image.load('assets/graphics/icon.png')
-game_font = pygame.font.Font('04B_19.ttf',40)
+game_font = pygame.font.Font('assets/font/04B_19.ttf', 40)
 
 clock = pygame.time.Clock()
 
