@@ -26,4 +26,4 @@ pip install pygame
 python main.py
 ```
 
-[![Python 3.11](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-360/) [![PIP 23.3](https://img.shields.io/badge/pip-21.0-blue.svg)](https://www.pip.org/downloads/release/python-360/)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-360/) [![PIP 23.3](https://img.shields.io/badge/pip-23.3-blue.svg)](https://www.pip.org/downloads/release/python-360/)
