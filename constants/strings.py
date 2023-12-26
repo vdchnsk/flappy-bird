@@ -4,4 +4,3 @@ class GameState:
 
     MAIN = 'main_game'
     GAME_OVER = 'game_over'
-

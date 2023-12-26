@@ -6,6 +6,7 @@ class WindowSettings:
     SCREEN_WIDTH = 576
     SCREEN_HEIGHT = 1024
 
+
 class InteractionSettins:
     def __init__():
         pass
