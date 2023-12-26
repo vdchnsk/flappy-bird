@@ -5,9 +5,9 @@ class Bird:
     movement_index = 0
 
     def __init__(self):
-        bird_downflap = pg.transform.scale2x(pg.image.load('assets/bluebird-downflap.png').convert_alpha())
-        bird_midflap = pg.transform.scale2x(pg.image.load('assets/bluebird-midflap.png').convert_alpha())
-        bird_upflap = pg.transform.scale2x(pg.image.load('assets/bluebird-upflap.png').convert_alpha())
+        bird_downflap = pg.transform.scale2x(pg.image.load('assets/graphics/bluebird-downflap.png').convert_alpha())
+        bird_midflap = pg.transform.scale2x(pg.image.load('assets/graphics/bluebird-midflap.png').convert_alpha())
+        bird_upflap = pg.transform.scale2x(pg.image.load('assets/graphics/bluebird-upflap.png').convert_alpha())
 
         self.frames = [bird_downflap, bird_midflap, bird_upflap]
         self.surface = self.frames[self.movement_index]

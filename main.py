@@ -121,7 +121,7 @@ screen = pygame.display.set_mode(
     (WindowSettings.SCREEN_WIDTH, WindowSettings.SCREEN_HEIGHT)
 )
 
-window_favicon = pygame.image.load('assets/icon.png')
+window_favicon = pygame.image.load('assets/graphics/icon.png')
 game_font = pygame.font.Font('04B_19.ttf',40)
 
 clock = pygame.time.Clock()
@@ -135,8 +135,8 @@ game_active = False
 score = 0
 sesstion_highest_score = 0 
 
-green_pipe = pygame.image.load('assets/pipe-green.png').convert()
-red_pipe = pygame.image.load('assets/pipe-red.png').convert()
+green_pipe = pygame.image.load('assets/graphics/pipe-green.png').convert()
+red_pipe = pygame.image.load('assets/graphics/pipe-red.png').convert()
 pipe_assets = [green_pipe, red_pipe]
 
 def randomize_pipe_asset():
@@ -147,10 +147,10 @@ def randomize_pipe_asset():
 
 randomize_pipe_asset()
 
-bg_surface = pygame.image.load('assets/background-day.png').convert()
+bg_surface = pygame.image.load('assets/graphics/background-day.png').convert()
 bg_surface = pygame.transform.scale2x(bg_surface) 
 
-floor_surface = pygame.image.load('assets/base.png').convert() 
+floor_surface = pygame.image.load('assets/graphics/base.png').convert() 
 floor_surface = pygame.transform.scale2x(floor_surface)
 floor_x_pos = 0;
 
@@ -160,7 +160,7 @@ spawn_pipe = pygame.USEREVENT
 pygame.time.set_timer(spawn_pipe, 1000)
 pipe_height = [400,600,800]
 
-game_over_surface = pygame.image.load('./assets/message.png').convert_alpha()
+game_over_surface = pygame.image.load('./assets/graphics/message.png').convert_alpha()
 game_over_surface = pygame.transform.scale2x(game_over_surface)
 
 game_over_rect = game_over_surface.get_rect(center = (288,512))
